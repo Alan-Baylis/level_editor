@@ -6,11 +6,11 @@ ScriptedImporter:
     400000: brick_02/brick_02/Transform
     2100000: mat.brick_02
     2300000: brick_02/brick_02/MeshRenderer
-    2800000: brick_02_diffuse
     2800002: brick_02_Normal
     2800004: brick_02_Metallic
     2800006: brick_02_Ambient Occlusion
     2800008: brick_02_Height
+    2800010: brick_02_Base Color
     3300000: brick_02/brick_02/MeshFilter
     11400000: sbsar
     11400002: graph0
@@ -27,9 +27,10 @@ ScriptedImporter:
     generateAllOutputs: 0
     generateMipMaps: 1
     preset: " <sbspreset pkgurl=\"pkg://brick_02\" label=\"\" >\n  <presetinput identifier=\"$outputsize\"
-      uid=\"422502073\" type=\"8\" value=\"10,10\" />\n </sbspreset>\n"
+      uid=\"422502073\" type=\"8\" value=\"10,10\" />\n  <presetinput identifier=\"hue\"
+      uid=\"1867475321\" type=\"0\" value=\"0.495\" />\n </sbspreset>\n"
     shaderName: Standard
-    outputNames: diffuse,Normal,Metallic,Ambient Occlusion,Height
+    outputNames: Base Color,Normal,Metallic,Ambient Occlusion,Height
     texturePackingList:
     - outputName: diffuse
       alphaSource: diffuse
@@ -64,7 +65,7 @@ ScriptedImporter:
       bHighQuality: 0
       textureWidth: 1024
       textureHeight: 1024
-      textureFormat: 0
+      textureFormat: 1
       loadBehavior: 0
     - label: Standalone
       bOverride: 0

@@ -1,38 +1,39 @@
 fileFormatVersion: 2
-guid: bc43b13ec8d422249b9dfacd3eea198c
+guid: 9b2afab7c2e649744b487b111dcde647
 ScriptedImporter:
   fileIDToRecycleName:
-    100000: brick_02/brick_02
-    400000: brick_02/brick_02/Transform
-    2100000: mat.brick_02
-    2300000: brick_02/brick_02/MeshRenderer
-    2800002: brick_02_Normal
-    2800004: brick_02_Metallic
-    2800006: brick_02_Ambient Occlusion
-    2800008: brick_02_Height
-    2800010: brick_02_Base Color
-    3300000: brick_02/brick_02/MeshFilter
+    100000: concrete_02/concrete_02
+    400000: concrete_02/concrete_02/Transform
+    2100000: mat.concrete_02
+    2300000: concrete_02/concrete_02/MeshRenderer
+    2800000: concrete_02_Base Color
+    2800002: concrete_02_Normal
+    2800004: concrete_02_Metallic
+    2800006: concrete_02_Ambient Occlusion
+    2800008: concrete_02_Height
+    3300000: concrete_02/concrete_02/MeshFilter
     11400000: sbsar
     11400002: graph0
-    13500000: brick_02/brick_02/SphereCollider
-    100100000: brick_02
+    13500000: concrete_02/concrete_02/SphereCollider
+    100100000: concrete_02
   externalObjects: {}
   userData: 
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 232528478, guid: 43a8bbf65be290d44ba52b94476242b9, type: 3}
   mGraphInstanceData:
-  - graphLabel: brick_02
+  - graphLabel: concrete_02
     graphDescIndex: 0
     generateAllOutputs: 0
     generateMipMaps: 1
-    preset: " <sbspreset pkgurl=\"pkg://brick_02\" label=\"\" >\n  <presetinput identifier=\"$outputsize\"
-      uid=\"422502073\" type=\"8\" value=\"10,10\" />\n </sbspreset>\n"
+    preset: " <sbspreset pkgurl=\"pkg://concrete_02\" label=\"\" >\n  <presetinput
+      identifier=\"$outputsize\" uid=\"3664342059\" type=\"8\" value=\"10,10\" />\n
+      </sbspreset>\n"
     shaderName: Standard
     outputNames: Base Color,Normal,Metallic,Ambient Occlusion,Height
     texturePackingList:
-    - outputName: diffuse
-      alphaSource: diffuse
+    - outputName: Base Color
+      alphaSource: Base Color
     - outputName: Normal
       alphaSource: Normal
     - outputName: Roughness
@@ -44,7 +45,7 @@ ScriptedImporter:
     - outputName: Height
       alphaSource: Height
     colorSpaceList:
-    - outputName: diffuse
+    - outputName: Base Color
       bLinear: 0
     - outputName: Normal
       bLinear: 1
@@ -82,4 +83,4 @@ ScriptedImporter:
       textureHeight: 256
       textureFormat: 0
       loadBehavior: 0
-    material: {fileID: 2100000, guid: bc43b13ec8d422249b9dfacd3eea198c, type: 3}
+    material: {fileID: 2100000, guid: 9b2afab7c2e649744b487b111dcde647, type: 3}

@@ -6,9 +6,11 @@ ScriptedImporter:
     400000: wood_02/wood_02/Transform
     2100000: mat.wood_02
     2300000: wood_02/wood_02/MeshRenderer
-    2800000: wood_02_Diffuse
     2800002: wood_02_Metallic
     2800004: wood_02_Normal
+    2800006: wood_02_Base Color
+    2800008: wood_02_Ambient Occlusion
+    2800010: wood_02_Height
     3300000: wood_02/wood_02/MeshFilter
     11400000: sbsar
     11400002: graph0
@@ -27,7 +29,7 @@ ScriptedImporter:
     preset: " <sbspreset pkgurl=\"pkg://wood_02\" label=\"\" >\n  <presetinput identifier=\"$outputsize\"
       uid=\"2727164447\" type=\"8\" value=\"10,10\" />\n </sbspreset>\n"
     shaderName: Standard
-    outputNames: Diffuse,Metallic,Normal
+    outputNames: Base Color,Normal,Metallic,Ambient Occlusion,Height
     texturePackingList:
     - outputName: Diffuse
       alphaSource: Diffuse

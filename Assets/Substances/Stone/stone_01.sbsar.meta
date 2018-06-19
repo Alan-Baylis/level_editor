@@ -1,35 +1,33 @@
 fileFormatVersion: 2
-guid: 5e8dbcb56eddf2048b7a861630f18e70
+guid: 3fd761f2b1bcf2b4e93d2ab5edf8def7
 ScriptedImporter:
   fileIDToRecycleName:
-    100000: stone_tile_01/stone_tile_01
-    400000: stone_tile_01/stone_tile_01/Transform
-    2100000: mat.stone_tile_01
-    2300000: stone_tile_01/stone_tile_01/MeshRenderer
-    2800000: stone_tile_01_Base Color
-    2800002: stone_tile_01_Normal
-    2800004: stone_tile_01_Metallic
-    2800006: stone_tile_01_Ambient Occlusion
-    2800008: stone_tile_01_Height
-    3300000: stone_tile_01/stone_tile_01/MeshFilter
+    100000: stone_01/stone_01
+    400000: stone_01/stone_01/Transform
+    2100000: mat.stone_01
+    2300000: stone_01/stone_01/MeshRenderer
+    2800000: stone_01_Base Color
+    2800002: stone_01_Normal
+    2800004: stone_01_Metallic
+    2800006: stone_01_Ambient Occlusion
+    2800008: stone_01_Height
+    3300000: stone_01/stone_01/MeshFilter
     11400000: sbsar
     11400002: graph0
-    13500000: stone_tile_01/stone_tile_01/SphereCollider
-    100100000: stone_tile_01
+    13500000: stone_01/stone_01/SphereCollider
+    100100000: stone_01
   externalObjects: {}
   userData: 
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 232528478, guid: 43a8bbf65be290d44ba52b94476242b9, type: 3}
   mGraphInstanceData:
-  - graphLabel: stone_tile_01
+  - graphLabel: stone_01
     graphDescIndex: 0
     generateAllOutputs: 0
     generateMipMaps: 1
-    preset: " <sbspreset pkgurl=\"pkg://stone_tile_01\" label=\"\" >\n  <presetinput
-      identifier=\"$outputsize\" uid=\"2876260079\" type=\"8\" value=\"10,10\" />\n
-      \ <presetinput identifier=\"$randomseed\" uid=\"4227999933\" type=\"4\" value=\"8680\"
-      />\n </sbspreset>\n"
+    preset: " <sbspreset pkgurl=\"pkg://stone_01\" label=\"\" >\n  <presetinput identifier=\"$outputsize\"
+      uid=\"2649807635\" type=\"8\" value=\"10,10\" />\n </sbspreset>\n"
     shaderName: Standard
     outputNames: Base Color,Normal,Metallic,Ambient Occlusion,Height
     texturePackingList:
@@ -84,4 +82,4 @@ ScriptedImporter:
       textureHeight: 256
       textureFormat: 0
       loadBehavior: 0
-    material: {fileID: 2100000, guid: 5e8dbcb56eddf2048b7a861630f18e70, type: 3}
+    material: {fileID: 2100000, guid: 3fd761f2b1bcf2b4e93d2ab5edf8def7, type: 3}

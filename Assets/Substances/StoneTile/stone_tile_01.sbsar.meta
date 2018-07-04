@@ -62,10 +62,10 @@ ScriptedImporter:
     - label: Default
       bOverride: 0
       bLockRatio: 1
-      bHighQuality: 0
+      bHighQuality: 1
       textureWidth: 1024
       textureHeight: 1024
-      textureFormat: 1
+      textureFormat: 0
       loadBehavior: 0
     - label: Standalone
       bOverride: 0

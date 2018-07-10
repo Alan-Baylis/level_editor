@@ -9,8 +9,6 @@ ScriptedImporter:
     2800000: stone_tile_01_Base Color
     2800002: stone_tile_01_Normal
     2800004: stone_tile_01_Metallic
-    2800006: stone_tile_01_Ambient Occlusion
-    2800008: stone_tile_01_Height
     3300000: stone_tile_01/stone_tile_01/MeshFilter
     11400000: sbsar
     11400002: graph0
@@ -27,13 +25,13 @@ ScriptedImporter:
     generateAllOutputs: 0
     generateMipMaps: 1
     preset: " <sbspreset pkgurl=\"pkg://stone_tile_01\" label=\"\" >\n  <presetinput
-      identifier=\"$outputsize\" uid=\"2876260079\" type=\"8\" value=\"10,10\" />\n
+      identifier=\"$outputsize\" uid=\"2876260079\" type=\"8\" value=\"11,11\" />\n
       </sbspreset>\n"
-    shaderName: Standard
-    outputNames: Base Color,Normal,Metallic,Ambient Occlusion,Height
+    shaderName: Standard (VertexDisplace)
+    outputNames: Base Color,Normal,Metallic
     texturePackingList:
     - outputName: Base Color
-      alphaSource: Base Color
+      alphaSource: Ambient Occlusion
     - outputName: Normal
       alphaSource: Normal
     - outputName: Roughness
@@ -62,9 +60,9 @@ ScriptedImporter:
     - label: Default
       bOverride: 0
       bLockRatio: 1
-      bHighQuality: 1
-      textureWidth: 1024
-      textureHeight: 1024
+      bHighQuality: 0
+      textureWidth: 2048
+      textureHeight: 2048
       textureFormat: 0
       loadBehavior: 0
     - label: Standalone

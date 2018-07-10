@@ -71,7 +71,7 @@ namespace RealtimeCSG
 
 		public static bool IsPrefab(GameObject gameObject)
 		{
-			return	PrefabUtility.GetPrefabParent(gameObject) == null && 
+			return	PrefabUtility.GetCorrespondingObjectFromSource(gameObject) == null && 
 					PrefabUtility.GetPrefabObject(gameObject) != null && 
 					gameObject.transform.parent == null; // Is a prefab
 		}
@@ -100,7 +100,7 @@ namespace RealtimeCSG
 			}
 			if (!hoverParent)
 				return null;
-			if (PrefabUtility.GetPrefabParent(hoverParent.gameObject) != null)
+			if (PrefabUtility.GetCorrespondingObjectFromSource(hoverParent.gameObject) != null)
 				return null;
 			return hoverParent;
 		}

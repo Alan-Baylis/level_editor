@@ -1,12 +1,11 @@
-﻿Shader "Custom/VertexDisplace" {
+﻿Shader "Standard (VertexDisplace)" {
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
-		_MainTex ("Albedo (RGB)", 2D) = "white" {}
-		_MetallicTex ("Metallic (RGB)", 2D) = "white" {}
-		_NormalMap ("Normalmap", 2D) = "bump" {}
-		_Occlusion ("Ambient Occlusion", 2D) = "bump" {}
+		_MainTex ("Albedo (RGB) Occlusion (A)", 2D) = "white" {}
+		_MetallicGlossMap ("Metallic (RGB)", 2D) = "white" {}
+		_BumpMap ("Normalmap", 2D) = "bump" {}
 		_Glossiness ("Smoothness", Range(0,1)) = 0.5
-		_Metallic ("Metallic", Range(0,1)) = 0.0
+		_OcclusionStrength ("Occlusion Strength", Range(0,1)) = 0.0
 		_Displacement ("Displacement", Range(0, 1.0)) = 0.3
 	}
 	SubShader {
@@ -20,10 +19,11 @@
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
 
-		sampler2D _MainTex;
-		sampler2D _MetallicTex;
-		sampler2D _NormalMap;
-		sampler2D _Occlusion;
+		sampler2D 	_MainTex;
+		sampler2D 	_MetallicGlossMap;
+		sampler2D 	_BumpMap;
+		//sampler2D 	_OcclusionMap;
+		half        _OcclusionStrength;
 
 
 		struct Input {
@@ -32,7 +32,6 @@
 		};
 
 		half _Glossiness;
-		half _Metallic;
 		fixed4 _Color;
 		float _Displacement;
 
@@ -50,14 +49,16 @@
 		
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			// Albedo comes from a texture tinted by color
-			o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb * _Color.rgb;
+			fixed4 baseocc = tex2D(_MainTex, IN.uv_MainTex);
+			o.Albedo = baseocc.rgb;
 			// Metallic and smoothness come from slider variables
-			fixed4 metallic = tex2D (_MetallicTex, IN.uv_MainTex);
+			half4 metallic = tex2D (_MetallicGlossMap, IN.uv_MainTex);
 			o.Metallic = metallic.r;
-			o.Smoothness = metallic.a;
+			o.Smoothness = metallic.a * _Glossiness;
+			// o.Alpha = 0.5;
 			
-			o.Normal = UnpackNormal(tex2D(_NormalMap, IN.uv_MainTex));
-			o.Occlusion = tex2D(_Occlusion, IN.uv_MainTex);
+			o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_MainTex));
+			o.Occlusion = LerpOneTo(baseocc.a, _OcclusionStrength);
 		}
 		ENDCG
 	}

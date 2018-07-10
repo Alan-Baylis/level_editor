@@ -4,7 +4,7 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: stone_tile_01_vertex
   m_Shader: {fileID: 4800000, guid: a74b814e289fc714790cdec1c1ebf940, type: 3}
@@ -86,7 +86,7 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _Displacement: 0.291
+    - _Displacement: 0.361
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5

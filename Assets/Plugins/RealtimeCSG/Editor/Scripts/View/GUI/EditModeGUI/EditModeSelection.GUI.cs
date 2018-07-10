@@ -265,7 +265,7 @@ namespace RealtimeCSG
 					for (int i = 1; i < targetNodes.Length; i++)
 					{
 						gameObject = targetNodes[i].gameObject;
-						var currentIsPrefab = PrefabUtility.GetPrefabParent(gameObject) == null && PrefabUtility.GetPrefabObject(gameObject) != null && gameObject.transform.parent == null;
+						var currentIsPrefab = PrefabUtility.GetCorrespondingObjectFromSource(gameObject) == null && PrefabUtility.GetPrefabObject(gameObject) != null && gameObject.transform.parent == null;
 						var currentPrefabBehaviour = targetNodes[i].PrefabBehaviour;
 						var currentPrefabSourceAlignment = targetNodes[i].PrefabSourceAlignment;
 						var currentPrefabDestinationAlignment = targetNodes[i].PrefabDestinationAlignment;

@@ -48,7 +48,7 @@ namespace RealtimeCSG
 				if (PrefabUtility.GetPrefabType(gameObject) == PrefabType.None)
 					continue;
 
-				if (PrefabUtility.GetPrefabParent(gameObject) == null && 
+				if (PrefabUtility.GetCorrespondingObjectFromSource(gameObject) == null && 
 					PrefabUtility.GetPrefabObject(gameObject) != null)
 					dragGameObjects.Add(gameObject);
 

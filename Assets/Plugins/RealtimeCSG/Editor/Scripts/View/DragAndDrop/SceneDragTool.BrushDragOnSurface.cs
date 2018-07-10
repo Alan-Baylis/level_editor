@@ -54,7 +54,7 @@ namespace RealtimeCSG
 				if (PrefabUtility.GetPrefabType(gameObject) == PrefabType.None)
 					continue;
 
-				if (PrefabUtility.GetPrefabParent(gameObject) == null && 
+				if (PrefabUtility.GetCorrespondingObjectFromSource(gameObject) == null && 
 					PrefabUtility.GetPrefabObject(gameObject) != null)
 					dragGameObjects.Add(gameObject);
 
@@ -142,7 +142,7 @@ namespace RealtimeCSG
 				CreateVisualObjects();
 			}
 
-			var realParent = (!hoverParent || PrefabUtility.GetPrefabParent(hoverParent.gameObject) != null) ? null : hoverParent;
+			var realParent = (!hoverParent || PrefabUtility.GetCorrespondingObjectFromSource(hoverParent.gameObject) != null) ? null : hoverParent;
 
 			int counter = 0;
 			foreach (var obj in visualDragGameObject)

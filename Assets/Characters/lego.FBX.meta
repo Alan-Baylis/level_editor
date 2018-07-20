@@ -1,30 +1,71 @@
 fileFormatVersion: 2
-guid: 05b623b0de531524998acb8ed85d2c97
+guid: 8194ca53f337f954399a3ad04ee621e2
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
-    100002: displace_test
-    100004: Line001
-    100006: displace_test_baked
+    100002: lego_poeople_obj
+    100004: Object001
+    100006: Object002
+    100008: Object003
+    100010: lego_01
+    100012: lego_02
+    100014: lego_03
+    100016: lego_04
     400000: //RootNode
-    400002: displace_test
-    400004: Line001
-    400006: displace_test_baked
-    2100000: 'Material #25'
-    2100002: 'Material #26'
-    2100004: 'Material #27'
-    2300000: displace_test
-    2300002: Line001
-    2300004: //RootNode
-    2300006: displace_test_baked
-    3300000: displace_test
-    3300002: Line001
-    3300004: //RootNode
-    3300006: displace_test_baked
-    4300000: Line001
-    4300002: displace_test
-    4300004: displace_test_baked
+    400002: lego_poeople_obj
+    400004: Object001
+    400006: Object002
+    400008: Object003
+    400010: lego_01
+    400012: lego_02
+    400014: lego_03
+    400016: lego_04
+    2100000: lego_girl_Kissana_blinn2SG
+    2100002: lego_girl_Kissana_blinn3SG
+    2100004: lego_girl_Kissana_blinn7SG
+    2100006: blinn9SG
+    2100008: lego_girl_Kissana_blinn4SG
+    2100010: lego_girl_Kissana_blinn5SG
+    2100012: lego_man_zak1_blinn4SG
+    2100014: lego_man_zak1_blinn6SG
+    2100016: lego_man_zak1_blinn2SG
+    2100018: lego_man_zak1_blinn3SG
+    2100020: lego_man_zak1_blinn5SG
+    2100022: HandsShader1SG
+    2100024: blinn3SG
+    2100026: Hair_01_blinn2SG
+    2100028: blinn6SG
+    2100030: blinn5SG
+    2100032: lego_man_Nikita_HandsShader2SG
+    2100034: lego_man_Nikita_blinn3SG
+    2100036: lego_man_Nikita_HandsShader1SG
+    2100038: lego_man_Nikita_blinn5SG
+    2100040: 'Material #46'
+    2300000: lego_poeople_obj
+    2300002: Object001
+    2300004: Object002
+    2300006: Object003
+    2300008: lego_01
+    2300010: lego_02
+    2300012: lego_03
+    2300014: lego_04
+    3300000: lego_poeople_obj
+    3300002: Object001
+    3300004: Object002
+    3300006: Object003
+    3300008: lego_01
+    3300010: lego_02
+    3300012: lego_03
+    3300014: lego_04
+    4300000: lego_poeople_obj
+    4300002: Object001
+    4300004: Object002
+    4300006: Object003
+    4300008: lego_04
+    4300010: lego_01
+    4300012: lego_02
+    4300014: lego_03
   externalObjects: {}
   materials:
     importMaterials: 0

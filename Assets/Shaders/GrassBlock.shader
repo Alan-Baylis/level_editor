@@ -56,7 +56,7 @@ Shader "GrassBlock" {
 			// Albedo comes from a texture tinted by color
 			fixed4 leafs = tex2D(_MainTex, IN.worldPos.xz);
 			fixed mask = saturate(leafs * IN.customMask * 17 - 1.5);
-			fixed mask2 = 1 - saturate(leafs * IN.customMask * 15) * 0.6;
+			fixed mask2 = 1 - saturate(leafs * IN.customMask * 10) * 0.5;
 			o.Albedo = lerp(_MudColor * mask2,_GrassColor * leafs,mask);//IN.customMask;//baseocc.rgb;
 			// Metallic and smoothness come from slider variables
 			//half4 metallic = tex2D (_MetallicGlossMap, IN.uv_MainTex);

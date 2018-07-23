@@ -49,21 +49,22 @@ Shader "GrassBlock" {
 
 		void vert (inout appdata_full v, out Input o) {
 			UNITY_INITIALIZE_OUTPUT(Input,o);
-			float3 worldNormal = mul(unity_ObjectToWorld, float4(v.normal, 0.0)).xyz;
-			o.customMask = worldNormal.g;
+			o.customMask = mul(unity_ObjectToWorld, float4(v.normal, 0.0)).y;
 		}
 		
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			// Albedo comes from a texture tinted by color
 			fixed4 leafs = tex2D(_MainTex, IN.worldPos.xz);
-			o.Albedo = lerp(_MudColor,_GrassColor * leafs,saturate(leafs * IN.customMask * 17 - 1.5));//IN.customMask;//baseocc.rgb;
+			fixed mask = saturate(leafs * IN.customMask * 17 - 1.5);
+			fixed mask2 = 1 - saturate(leafs * IN.customMask * 15) * 0.6;
+			o.Albedo = lerp(_MudColor * mask2,_GrassColor * leafs,mask);//IN.customMask;//baseocc.rgb;
 			// Metallic and smoothness come from slider variables
 			//half4 metallic = tex2D (_MetallicGlossMap, IN.uv_MainTex);
 			o.Metallic = 0;//metallic.r;
 			o.Smoothness = 0.5;//metallic.a * _Glossiness;
 			// o.Alpha = 0.5;
 			
-			//o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_MainTex));
+			//o.Normal = UnpackNormal(lerp(fixed4(0.5, 0.5, 1, 1), tex2D(_BumpMap, IN.worldPos.xz), mask));
 			//o.Occlusion = LerpOneTo(baseocc.a, _OcclusionStrength);
 		}
 		ENDCG

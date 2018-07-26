@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 6273f212b336d0840bdfaee3573b8c30
+guid: 71da7fed155b8f54ca5d5c56f859b208
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -1800,6 +1800,7 @@ ModelImporter:
     4300506: 00011111
     4300508: 01001111
     4300510: 10001111
+    4300512: helper_01
     2186277476908879412: ImportLogs
   externalObjects: {}
   materials:

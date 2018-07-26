@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 6273f212b336d0840bdfaee3573b8c30
+guid: b9dde21732e4b5948826176a442a556c
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -517,6 +517,9 @@ ModelImporter:
     101022: vertex674
     101024: vertex675
     101026: vertex676
+    101028: grid_corner
+    101030: grid_edge
+    101032: grid_full
     400000: //RootNode
     400002: 00000000
     400004: 00000001
@@ -1031,6 +1034,9 @@ ModelImporter:
     401022: vertex674
     401024: vertex675
     401026: vertex676
+    401028: grid_corner
+    401030: grid_edge
+    401032: grid_full
     2100000: No Name
     2300000: //RootNode
     2300002: 00000001
@@ -1288,6 +1294,9 @@ ModelImporter:
     2300506: 11111101
     2300508: 11111110
     2300510: chamfer_box
+    2300512: grid_corner
+    2300514: grid_edge
+    2300516: grid_full
     3300000: //RootNode
     3300002: 00000001
     3300004: 00000010
@@ -1544,6 +1553,9 @@ ModelImporter:
     3300506: 11111101
     3300508: 11111110
     3300510: chamfer_box
+    3300512: grid_corner
+    3300514: grid_edge
+    3300516: grid_full
     4300000: ChamferBox001
     4300002: chamfer_box
     4300004: 10000000
@@ -1800,6 +1812,10 @@ ModelImporter:
     4300506: 00011111
     4300508: 01001111
     4300510: 10001111
+    4300512: helper_01
+    4300514: grid_full
+    4300516: grid_edge
+    4300518: grid_corner
     2186277476908879412: ImportLogs
   externalObjects: {}
   materials:

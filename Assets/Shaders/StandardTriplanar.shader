@@ -1,152 +1,105 @@
-﻿// Standard shader with triplanar mapping
-// https://github.com/keijiro/StandardTriplanar
-
-Shader "Standard Triplanar"
+﻿Shader "Standard Triplanar"
 {
-    Properties
-    {
-        _Color("", Color) = (1, 1, 1, 1)
-        _MainTex("", 2D) = "white" {}
+	Properties
+	{
+	_Color("Color", Color) = (1, 1, 1, 1)
+	_MainTex("Main Texture", 2D) = "white" {}
+	_BumpScale("Normal Scale", Float) = 1
+	_BumpMap("Normal Map", 2D) = "bump" {}
+	_MapScale("Mas Scale", Float) = 1
+	}
+		SubShader
+	{
+		Tags{ "RenderType" = "Opaque" }
 
-        _Glossiness("", Range(0, 1)) = 0.5
-        [Gamma] _Metallic("", Range(0, 1)) = 0
+		CGPROGRAM
 
-        _BumpScale("", Float) = 1
-        _BumpMap("", 2D) = "bump" {}
+		#pragma surface surf Lambert vertex:vert fullforwardshadows addshadow
+		#pragma target 3.0
 
-        _OcclusionStrength("", Range(0, 1)) = 1
-        _OcclusionMap("", 2D) = "white" {}
+		half4 _Color;
+		sampler2D _MainTex;
 
-        _MapScale("", Float) = 1
-    }
-    SubShader
-    {
-        Tags { "RenderType"="Opaque" }
+		half _Glossiness;
+		half _Metallic;
 
-        CGPROGRAM
+		half _BumpScale;
+		sampler2D _BumpMap;
 
-        #pragma surface surf Standard vertex:vert fullforwardshadows addshadow
+		half _OcclusionStrength;
+		sampler2D _OcclusionMap;
 
-        #pragma shader_feature _NORMALMAP
-        //#pragma shader_feature _OCCLUSIONMAP
+		half _MapScale;
 
-        #pragma target 3.0
+		struct appdata
+		{
+			float4 vertex : POSITION;
+			float3 normal : NORMAL;
+			float4 tangent : TANGENT;
+		};
 
-        half4 _Color;
-        sampler2D _MainTex;
+		struct Input
+		{
+			float3 texcoord;
+			float3 blend;
+			float3 worldnormal;
+			float4 tangent;
+		};
 
-        half _Glossiness;
-        half _Metallic;
+		void vert(inout appdata v, out Input o)
+		{
+			UNITY_INITIALIZE_OUTPUT(Input, o);
 
-        half _BumpScale;
-        sampler2D _BumpMap;
+			o.worldnormal = UnityObjectToWorldNormal(v.normal).xyz;
 
-        half _OcclusionStrength;
-        sampler2D _OcclusionMap;
+			o.tangent = v.tangent;// float4(1, 1, 0, 1);//
 
-        half _MapScale;
+			float3 worldpos = mul(unity_ObjectToWorld, v.vertex).xyz;
 
-        struct Input
-        {
-            float3 worldPos;
-            float3 myNormal;
-			//float2 tx;
-            //float2 ty;
-            //float2 tz;
-			float3 bf;
-        };
+			o.blend = normalize(abs(o.worldnormal));
+			o.blend /= dot(o.blend, (float3)1);
 
-        void vert(inout appdata_full v, out Input o)
-        {
-            UNITY_INITIALIZE_OUTPUT(Input, o);
-            float3 worldnormals = mul(unity_ObjectToWorld, float4(v.normal, 0.0)).xyz;
-			o.myNormal = mul(unity_ObjectToWorld, float4(v.normal, 0.0)).xyz;
-			
-			// Blending factor of triplanar mapping
-            o.bf = normalize(abs(worldnormals));
-            o.bf /= dot(o.bf, (float3)1);
+			//o.blend = saturate(pow(o.worldnormal * 1.4, 4));
+			//o.blend /= o.blend.x + o.blend.y + o.blend.z;
 
-			//o.worldPos *= _MapScale;
-			
-            // Triplanar mapping
-            //float2 tx = worldpos.yz * _MapScale;
-            //float2 ty = worldpos.zx * _MapScale;
-            //float2 tz = worldpos.xy * _MapScale;
-			
-        }
 
-        void surf(Input i, inout SurfaceOutputStandard o)
-        {
-            // Blending factor of triplanar mapping
-            //float3 bf = normalize(abs(IN.localNormal));
-            //bf /= dot(bf, (float3)1);
+			o.texcoord.zy = worldpos.zy * _MapScale;
+			o.texcoord.zx = worldpos.zx * _MapScale;
+			o.texcoord.xy = worldpos.xy * _MapScale;
 
-            // Triplanar mapping
-            //float2 tx = IN.localCoord.yz * _MapScale;
-           // float2 ty = IN.localCoord.zx * _MapScale;
-            //float2 tz = IN.localCoord.xy * _MapScale;
+		}
 
-			float2 uvX = i.worldPos.zy;
-			float2 uvY = i.worldPos.xz;
-			float2 uvZ = i.worldPos.xy;
-			
-            // Base color
-            half4 cx = tex2D(_MainTex, uvX) * i.bf.x;
-            half4 cy = tex2D(_MainTex, uvY) * i.bf.y;
-            half4 cz = tex2D(_MainTex, uvZ) * i.bf.z;
-            half4 color = (cx + cy + cz) * _Color;
-            
-            o.Alpha = color.a;
+		void surf(Input i, inout SurfaceOutput o)
+		{
+			// Base color
+			//half4 cx = tex2D(_MainTex, i.localCoord.yz) * bf.x;
+			//half4 cy = tex2D(_MainTex, i.localCoord.zx) * bf.y;
+			//half4 cz = tex2D(_MainTex, i.localCoord.xy) * bf.z;
+			//half4 color = (cx + cy + cz) * _Color;
+			o.Albedo = 0.9;// color.rgb;
+			o.Alpha = _Color.a;// color.a;
 
-        #ifdef _NORMALMAP
-            // Normal map
-            //half4 tnormalX = tex2D(_BumpMap, uvX) * i.bf.x;
-            //half4 tnormalY = tex2D(_BumpMap, uvY) * i.bf.y;
-            //half4 tnormalZ = tex2D(_BumpMap, uvZ) * i.bf.z;
-			
-			half3 tnormalX = UnpackNormal(tex2D(_BumpMap, uvX));
-			half3 tnormalY = UnpackNormal(tex2D(_BumpMap, uvY));
-			half3 tnormalZ = UnpackNormal(tex2D(_BumpMap, uvZ));
-			
-			//float border = 1 - saturate(i.bf.x * i.bf.x * i.bf.y * i.bf.y * i.bf.y * i.bf.y);
-			
-			//half3 axisSign = sign(i.myNormal);
-			// Flip tangent normal z to account for surface normal facing
-			//tnormalX.x *= axisSign.x * -1;
-			//tnormalX.x *= axisSign.x ;
-			//tnormalY.x *= axisSign.y;
-			//tnormalY.y *= axisSign.y * -1;
-			//tnormalZ.x *= axisSign.z * -1;
-			//tnormalZ.y *= axisSign.z * -1;
-			
-			//tnormalX = half3(tnormalX.xy + i.myNormal.zy, i.myNormal.x);
-			//tnormalY = half3(tnormalY.xy + i.myNormal.xz, i.myNormal.y);
-			//tnormalZ = half3(tnormalZ.xy + i.myNormal.xy, i.myNormal.z);
+			// Normal map
+			float3 normalsign = sign(i.worldnormal);
 
-            o.Normal = normalize(
-				tnormalX.xyz * i.bf.x +
-				tnormalY.xyz * i.bf.y +
-				tnormalZ.xyz * i.bf.z
-			);
-			
-			o.Albedo = color.rgb;
-			
-        #endif
+			half3 nx = UnpackNormal(tex2D(_BumpMap, i.texcoord.zy));
+			half3 ny = UnpackNormal(tex2D(_BumpMap, i.texcoord.zx));
+			half3 nz = UnpackNormal(tex2D(_BumpMap, i.texcoord.xy * float2(-normalsign.z, 1.0)));
 
-        #ifdef _OCCLUSIONMAP
-            // Occlusion map
-            //half ox = tex2D(_OcclusionMap, i.tx).g * i.bf.x;
-            //half oy = tex2D(_OcclusionMap, i.ty).g * i.bf.y;
-            //half oz = tex2D(_OcclusionMap, i.tz).g * i.bf.z;
-            //o.Occlusion = lerp((half4)1, ox + oy + oz, _OcclusionStrength);
-        #endif
+			//nx = normalize(half3(nx.xy * float2(normalsign.x, 1.0) + i.worldnormal.zy, i.worldnormal.x));
+			//ny = normalize(half3(ny.xy + i.worldnormal.zx, i.worldnormal.y));
+			//nz = normalize(half3(nz.xy * float2(-normalsign.z, 1.0) + i.worldnormal.xy, i.worldnormal.z));
 
-            // Misc parameters
-            o.Metallic = _Metallic;
-            o.Smoothness = _Glossiness;
-        }
-        ENDCG
-    }
-    FallBack "Diffuse"
-    CustomEditor "StandardTriplanarInspector"
+			//nx = nx.zyx;
+			ny = ny.yzx;
+
+			o.Normal = nx;// *i.blend.x + ny * i.blend.y + nz * i.blend.z;
+
+			// Misc parameters
+			//o.Metallic = 0;// _Metallic;
+			//o.Smoothness = 0.5;// _Glossiness;
+		}
+	ENDCG
+	}
+		FallBack "Diffuse"
 }

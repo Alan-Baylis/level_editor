@@ -9,6 +9,9 @@
 		[NoScaleOffset]	_BottomAlbedo("Bottom Albedo", 2D) = "white" {}
 		[NoScaleOffset]	_BottomNormal("Bottom Normal", 2D) = "white" {}
 		_MapScale ("Map Scale", float) = 1.0
+		_ChamferScale ("Chamfer Scale", float) = 1.0
+		_MixMult ("Mix Mult", float) = 1.0
+		_MixSub ("Mix Sub", float) = 1.0
 	}
 	SubShader
 	{
@@ -20,7 +23,9 @@
 		#include "UnityCG.cginc"
 
 		sampler2D _TopAlbedo, _TopNormal, _SideAlbedo, _SideNormal, _BottomAlbedo, _BottomNormal;
-
+		float _MixMult;
+		float _MixSub;
+		
 		void GetTriplanarTextures(float3 worldPos, float3 worldNormal, float4 blend, out fixed4 albedo, out half3 normal)
 		{
 			// NORMAL SIGN
@@ -55,7 +60,7 @@
 			BottomNormal = BottomNormal.yzx;
 			xNorm.xyz = xNorm.zyx;
 
-			float topmask = saturate(TopAlbedo.a * blend.y * 17 - 1.5);
+			float topmask = saturate(TopAlbedo.a * blend.y * _MixMult - _MixSub);
 
 			// blend normals together
 			normal = xNorm * blend.x + TopNormal * topmask + BottomNormal * blend.w + zNorm * blend.z;
@@ -80,6 +85,7 @@
 			#include "AutoLight.cginc"
 
 			float _MapScale;
+			float _ChamferScale;
 
 			struct appdata
 			{
@@ -103,10 +109,13 @@
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID(v);
 				o.pos = UnityObjectToClipPos(v.vertex);
-				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz * _MapScale;
 				o.worldNormal = UnityObjectToWorldNormal(v.normal);
+				
+				float3 chamfermap = o.worldNormal * abs(o.worldNormal * o.worldNormal) * _ChamferScale;
+				
+				o.worldPos = (mul(unity_ObjectToWorld, v.vertex).xyz + chamfermap) * _MapScale;
 
-				float3 blend = normalize(abs(o.worldNormal));
+				float3 blend = abs(o.worldNormal);
 				blend /= dot(blend, (float3)1);
 
 				float3 nsign = sign(o.worldNormal);

@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: grass_block_triplanar
-  m_Shader: {fileID: 4800000, guid: e4be71837c1c849fda6e7e18d331e612, type: 3}
+  m_Shader: {fileID: 4800000, guid: 97ebd055a2280a249ab71d8f00b332ca, type: 3}
   m_ShaderKeywords: _NORMALMAP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -18,8 +18,20 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _Bottom:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BottomAlbedo:
+        m_Texture: {fileID: 2800000, guid: 5e8dbcb56eddf2048b7a861630f18e70, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BottomNormal:
+        m_Texture: {fileID: 2800002, guid: 5e8dbcb56eddf2048b7a861630f18e70, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 5f685df8489137a4486c32274ef1f5c0, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6575860906220aa49b6cb2a0d6aa1f37, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -54,6 +66,30 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Side:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SideAlbedo:
+        m_Texture: {fileID: 2800000, guid: 02b6d5926cb85484794b7e0c574423fa, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SideNormal:
+        m_Texture: {fileID: 2800002, guid: 02b6d5926cb85484794b7e0c574423fa, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Top:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TopAlbedo:
+        m_Texture: {fileID: 2800000, guid: 11a3d731681b6774b83acc4317548c35, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TopNormal:
+        m_Texture: {fileID: 2800000, guid: 5f685df8489137a4486c32274ef1f5c0, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - _BumpScale: 1
     - _Cutoff: 0.5
@@ -73,7 +109,7 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.666269, g: 0.8490566, b: 0.13216448, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GrassColor: {r: 0.6819698, g: 0.8773585, b: 0.19450872, a: 1}
     - _MudColor: {r: 0.5377358, g: 0.2616166, b: 0.12428801, a: 1}

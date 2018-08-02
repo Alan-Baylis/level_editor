@@ -8,6 +8,8 @@
 		[NoScaleOffset]	_SideNormal("Side Normal", 2D) = "white" {}
 		[NoScaleOffset]	_BottomAlbedo("Bottom Albedo", 2D) = "white" {}
 		[NoScaleOffset]	_BottomNormal("Bottom Normal", 2D) = "white" {}
+		//[NoScaleOffset]	_MatCap("MatCap", 2D) = "white" {}
+		//_MatCapColor("Mat Cap Color", Color) = (1,1,1,1)
 		_MapScale ("Map Scale", float) = 1.0
 		_ChamferScale ("Chamfer Scale", float) = 1.0
 		_MixMult ("Mix Mult", float) = 1.0
@@ -22,9 +24,10 @@
 		#include "UnityShaderVariables.cginc"
 		#include "UnityCG.cginc"
 
-		sampler2D _TopAlbedo, _TopNormal, _SideAlbedo, _SideNormal, _BottomAlbedo, _BottomNormal;
+		sampler2D _TopAlbedo, _TopNormal, _SideAlbedo, _SideNormal, _BottomAlbedo, _BottomNormal, _MatCap;
 		float _MixMult;
 		float _MixSub;
+		fixed4 _MatCapColor;
 		
 		void GetTriplanarTextures(float3 worldPos, float3 worldNormal, float4 blend, out fixed4 albedo, out half3 normal)
 		{
@@ -61,12 +64,13 @@
 			xNorm.xyz = xNorm.zyx;
 
 			float topmask = saturate(TopAlbedo.a * blend.y * _MixMult - _MixSub);
+			float topshadow = 1 - saturate(TopAlbedo.a * blend.y * 5 - 0.5);
 
 			// blend normals together
 			normal = xNorm * blend.x + TopNormal * topmask + BottomNormal * blend.w + zNorm * blend.z;
 
 			// blend albedos together
-			albedo = xAlbedo * blend.x + TopAlbedo * topmask + BottomAlbedo * blend.w + zAlbedo * blend.z;
+			albedo = (xAlbedo * blend.x + zAlbedo * blend.z + BottomAlbedo * blend.w) * topshadow + TopAlbedo * topmask;
 		}
 
 		ENDCG
@@ -99,12 +103,14 @@
 				float3 worldNormal : NORMAL;
 				float3 worldPos : TEXCOORD0;
 				float4 blend : TEXCOORD1;
+				float3 c0 : TEXCOORD2;
+				float3 c1 : TEXCOORD3;
 				SHADOW_COORDS(1)
 				UNITY_FOG_COORDS(2)
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
-			v2f vert(appdata v)
+			v2f vert(appdata_tan v)
 			{
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID(v);
@@ -115,7 +121,7 @@
 				
 				o.worldPos = (mul(unity_ObjectToWorld, v.vertex).xyz + chamfermap) * _MapScale;
 
-				float3 blend = abs(o.worldNormal);
+				float3 blend = normalize(abs(o.worldNormal));
 				blend /= dot(blend, (float3)1);
 
 				float3 nsign = sign(o.worldNormal);
@@ -125,6 +131,15 @@
 				o.blend.w = saturate(blend.y * (1 - nsign.y));
 				o.blend.z = blend.z;
 
+				//float3 worldNorm = normalize(unity_WorldToObject[0].xyz * v.normal.x + unity_WorldToObject[1].xyz * v.normal.y + unity_WorldToObject[2].xyz * v.normal.z);
+					//worldNorm = mul((float3x3)UNITY_MATRIX_V, worldNorm);
+					//o.cap.xy = worldNorm.xy * 0.5 + 0.5;
+									v.normal = normalize(v.normal);
+					v.tangent = normalize(v.tangent);
+					TANGENT_SPACE_ROTATION;
+									o.c0 = mul(rotation, normalize(UNITY_MATRIX_IT_MV[0].xyz));
+					o.c1 = mul(rotation, normalize(UNITY_MATRIX_IT_MV[1].xyz));
+				
 				TRANSFER_SHADOW(o);
 				UNITY_TRANSFER_FOG(o,o.pos);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
@@ -141,7 +156,10 @@
 				half3 lighting = saturate(dot(normalize(normal), _WorldSpaceLightPos0.xyz)) * _LightColor0.rgb * atten;
 				lighting += ShadeSH9(half4(normal,1));
 
-				half3 col = albedo.rgb * lighting;
+				//float3 matcoords = normalize(mul((float3x3)UNITY_MATRIX_V, normal));
+				//fixed3 matcap = tex2D(_MatCap, matcoords.xy * 0.5 + 0.5).rgb;
+				
+				half3 col = albedo.rgb * lighting;// + matcap * _MatCapColor;
 
 				UNITY_APPLY_FOG(i.fogCoord, col);
 				return half4(col, 1);

@@ -11,7 +11,7 @@
 		//[NoScaleOffset]	_MatCap("MatCap", 2D) = "white" {}
 		//_MatCapColor("Mat Cap Color", Color) = (1,1,1,1)
 		_MapScale ("Map Scale", float) = 1.0
-		_ChamferScale ("Chamfer Scale", float) = 1.0
+		//_ChamferScale ("Chamfer Scale", float) = 1.0
 		_MixMult ("Mix Mult", float) = 1.0
 		_MixSub ("Mix Sub", float) = 1.0
 	}
@@ -103,23 +103,23 @@
 				float3 worldNormal : NORMAL;
 				float3 worldPos : TEXCOORD0;
 				float4 blend : TEXCOORD1;
-				float3 c0 : TEXCOORD2;
-				float3 c1 : TEXCOORD3;
+				//float3 c0 : TEXCOORD2;
+				//float3 c1 : TEXCOORD3;
 				SHADOW_COORDS(1)
 				UNITY_FOG_COORDS(2)
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
-			v2f vert(appdata_tan v)
+			v2f vert(appdata v)
 			{
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID(v);
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.worldNormal = UnityObjectToWorldNormal(v.normal);
 				
-				float3 chamfermap = o.worldNormal * abs(o.worldNormal * o.worldNormal) * _ChamferScale;
+				//float3 chamfermap = o.worldNormal * abs(o.worldNormal * o.worldNormal) * _ChamferScale;
 				
-				o.worldPos = (mul(unity_ObjectToWorld, v.vertex).xyz + chamfermap) * _MapScale;
+				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz * _MapScale;
 
 				float3 blend = normalize(abs(o.worldNormal));
 				blend /= dot(blend, (float3)1);
@@ -131,14 +131,11 @@
 				o.blend.w = saturate(blend.y * (1 - nsign.y));
 				o.blend.z = blend.z;
 
-				//float3 worldNorm = normalize(unity_WorldToObject[0].xyz * v.normal.x + unity_WorldToObject[1].xyz * v.normal.y + unity_WorldToObject[2].xyz * v.normal.z);
-					//worldNorm = mul((float3x3)UNITY_MATRIX_V, worldNorm);
-					//o.cap.xy = worldNorm.xy * 0.5 + 0.5;
-									v.normal = normalize(v.normal);
-					v.tangent = normalize(v.tangent);
-					TANGENT_SPACE_ROTATION;
-									o.c0 = mul(rotation, normalize(UNITY_MATRIX_IT_MV[0].xyz));
-					o.c1 = mul(rotation, normalize(UNITY_MATRIX_IT_MV[1].xyz));
+				//v.normal = normalize(v.normal);
+				//v.tangent = normalize(v.tangent);
+				//TANGENT_SPACE_ROTATION;
+				//o.c0 = mul(rotation, normalize(UNITY_MATRIX_IT_MV[0].xyz));
+				//o.c1 = mul(rotation, normalize(UNITY_MATRIX_IT_MV[1].xyz));
 				
 				TRANSFER_SHADOW(o);
 				UNITY_TRANSFER_FOG(o,o.pos);

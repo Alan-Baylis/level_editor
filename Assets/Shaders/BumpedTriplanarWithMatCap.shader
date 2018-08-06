@@ -1,4 +1,4 @@
-﻿Shader "BumpedTriplanar"
+﻿Shader "Hidden/BumpedTriplanarMatCap"
 {
 	Properties
 	{
@@ -8,7 +8,10 @@
 		[NoScaleOffset]	_SideNormal("Side Normal", 2D) = "white" {}
 		[NoScaleOffset]	_BottomAlbedo("Bottom Albedo", 2D) = "white" {}
 		[NoScaleOffset]	_BottomNormal("Bottom Normal", 2D) = "white" {}
+		//[NoScaleOffset]	_MatCap("MatCap", 2D) = "white" {}
+		//_MatCapColor("Mat Cap Color", Color) = (1,1,1,1)
 		_MapScale ("Map Scale", float) = 1.0
+		//_ChamferScale ("Chamfer Scale", float) = 1.0
 		_MixMult ("Mix Mult", float) = 1.0
 		_MixSub ("Mix Sub", float) = 1.0
 		_DistortScale ("Distort Scale", float) = 1.0
@@ -16,20 +19,20 @@
 	}
 	SubShader
 	{
-		Tags{ "RenderType" = "Opaque"}
+		Tags{ "RenderType" = "Opaque" "DisableBatching" = "True"}
 
 		CGINCLUDE
 		#include "HLSLSupport.cginc"
 		#include "UnityShaderVariables.cginc"
 		#include "UnityCG.cginc"
 
-		sampler2D _TopAlbedo, _TopNormal, _SideAlbedo, _SideNormal, _BottomAlbedo, _BottomNormal;
+		sampler2D _TopAlbedo, _TopNormal, _SideAlbedo, _SideNormal, _BottomAlbedo, _BottomNormal, _MatCap;
 		float _MixMult;
 		float _MixSub;
+		fixed4 _MatCapColor;
 		float _DistortScale;
 		float _DistortAmount;
 		
-		// TRIPLANAR MAPPING
 		void GetTriplanarTextures(float3 worldPos, float3 worldNormal, float4 blend, out fixed4 albedo, out half3 normal)
 		{
 			// NORMAL SIGN
@@ -74,20 +77,6 @@
 			albedo = (xAlbedo * blend.x + zAlbedo * blend.z + BottomAlbedo * blend.w) * topshadow + TopAlbedo * topmask;
 		}
 
-		// VERTEX DISPLACEMENT
-		float4 getNewVertPosition(float4 p)
-		{
-			float3 sin1 = sin(p.xyz * _DistortScale) * _DistortAmount * 0.02;
-			float3 sin2 = sin(p.xyz * _DistortScale * 0.45) * _DistortAmount * 0.04;
-			float3 sin3 = sin(p.xyz * _DistortScale * 0.33) * _DistortAmount * 0.01;
-
-			p.xyz += sin1.x + sin1.y + sin1.z;
-			p.xyz += sin2.x + sin2.y + sin2.z;
-			p.xyz += sin3.x + sin3.y + sin3.z;
-
-			return p;
-		}
-
 		ENDCG
 
 			Pass
@@ -118,26 +107,37 @@
 				float3 worldNormal : NORMAL;
 				float3 worldPos : TEXCOORD0;
 				float4 blend : TEXCOORD1;
-				SHADOW_COORDS(2)
-				UNITY_FOG_COORDS(3)
+				//float3 c0 : TEXCOORD2;
+				//float3 c1 : TEXCOORD3;
+				SHADOW_COORDS(1)
+				UNITY_FOG_COORDS(2)
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
+
+			float4 getNewVertPosition(float4 p)
+			{
+				float3 sin1 = sin(p.xyz * _DistortScale) * _DistortAmount * 0.02;
+				float3 sin2 = sin(p.xyz * _DistortScale * 0.45) * _DistortAmount * 0.04;
+				float3 sin3 = sin(p.xyz * _DistortScale * 0.33) * _DistortAmount * 0.01;
+
+				p.xyz += sin1.x + sin1.y + sin1.z;
+				p.xyz += sin2.x + sin2.y + sin2.z;
+				p.xyz += sin3.x + sin3.y + sin3.z;
+
+				return p;
+			}
 
 			v2f vert(appdata_tan v)
 			{
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID(v);
-				
-				// CONVERT VERTEX TO WORLD SPACE
+
 				float4 worldvertex = mul(unity_ObjectToWorld, v.vertex);
 
-				// DISTORT VERTEX IN WORLD SPACE
 				float4 vertPosition = getNewVertPosition(worldvertex);
 				
-				// CONVERT VERTEX BACK TO OBJECT SPACE
 				v.vertex = mul(unity_WorldToObject, vertPosition);
 
-				// CREATE TRIPLANAR BLEND MASKS
 				float3 blendnormal = UnityObjectToWorldNormal(v.normal);
 
 				float3 blend = normalize(abs(blendnormal));
@@ -150,7 +150,6 @@
 				o.blend.w = saturate(blend.y * (1 - nsign.y));
 				o.blend.z = blend.z;
 
-				// DISTORT NORMALS BASED ON THE NEW VERTEX POSITION
 				float4 bitangent = float4(cross(v.normal, v.tangent), 0);
 
 				float4 v1 = getNewVertPosition(worldvertex + v.tangent * 0.01) - vertPosition;
@@ -158,13 +157,18 @@
 
 				v.normal = cross(v1, v2);
 
-				/////////////////
-				
-				o.pos = UnityObjectToClipPos(v.vertex);
+				//v.normal = UnityObjectToWorldNormal(v.normal);
 
 				o.worldNormal = UnityObjectToWorldNormal(v.normal);
 
-				o.worldPos = worldvertex.xyz * _MapScale;
+				o.worldPos = vertPosition.xyz * _MapScale;
+
+				//v.normal = normalize(v.normal);
+				//v.tangent = normalize(v.tangent);
+				//TANGENT_SPACE_ROTATION;
+				//o.c0 = mul(rotation, normalize(UNITY_MATRIX_IT_MV[0].xyz));
+				//o.c1 = mul(rotation, normalize(UNITY_MATRIX_IT_MV[1].xyz));
+				o.pos = UnityObjectToClipPos(v.vertex);
 
 				TRANSFER_SHADOW(o);
 				UNITY_TRANSFER_FOG(o,o.pos);
@@ -181,8 +185,11 @@
 				UNITY_LIGHT_ATTENUATION(atten, i, i.worldPos);
 				half3 lighting = saturate(dot(normalize(normal), _WorldSpaceLightPos0.xyz)) * _LightColor0.rgb * atten;
 				lighting += ShadeSH9(half4(normal,1));
+
+				//float3 matcoords = normalize(mul((float3x3)UNITY_MATRIX_V, normal));
+				//fixed3 matcap = tex2D(_MatCap, matcoords.xy * 0.5 + 0.5).rgb;
 				
-				half3 col = albedo.rgb * lighting;
+				half3 col = albedo.rgb * lighting;// + matcap * _MatCapColor;
 
 				UNITY_APPLY_FOG(i.fogCoord, col);
 				return half4(col, 1);
@@ -274,11 +281,6 @@
 			v2f vert(appdata_base v)
 			{
 				v2f o;
-
-				float4 worldvertex = mul(unity_ObjectToWorld, v.vertex);
-				float4 vertPosition = getNewVertPosition(worldvertex);
-				v.vertex = mul(unity_WorldToObject, vertPosition);
-				o.pos = UnityObjectToClipPos(v.vertex);
 				TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
 				return o;
 			}

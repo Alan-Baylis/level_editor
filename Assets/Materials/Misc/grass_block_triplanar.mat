@@ -103,6 +103,9 @@ Material:
     - _ChamferScale: 0.06
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _Distort: 0.04
+    - _DistortAmount: 0.3
+    - _DistortScale: 20
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5

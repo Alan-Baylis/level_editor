@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1f483e469d105d14cb12f23fb3fe9d25
+guid: 72902a4a14cfc194382ced177e4cf768
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -1800,7 +1800,7 @@ ModelImporter:
     4300506: 00011111
     4300508: 01001111
     4300510: 10001111
-    4300512: Box001
+    4300512: chamfer_box_subdivided
     2186277476908879412: ImportLogs
   externalObjects: {}
   materials:
@@ -1845,7 +1845,7 @@ ModelImporter:
     useFileUnits: 1
     optimizeMeshForGPU: 1
     keepQuads: 0
-    weldVertices: 0
+    weldVertices: 1
     preserveHierarchy: 0
     indexFormat: 0
     secondaryUVAngleDistortion: 8
@@ -1858,7 +1858,7 @@ ModelImporter:
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
-    tangentImportMode: 2
+    tangentImportMode: 3
     normalCalculationMode: 4
   importAnimation: 1
   copyAvatar: 0

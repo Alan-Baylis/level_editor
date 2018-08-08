@@ -1,4 +1,4 @@
-﻿Shader "BumpedTriplanar"
+﻿Shader "BumpedTriplanarAlpha"
 {
 	Properties
 	{
@@ -13,10 +13,12 @@
 		_MixSub ("Mix Sub", float) = 1.0
 		_DistortScale ("Distort Scale", float) = 1.0
 		_DistortAmount ("Distort Amount", float) = 1.0
+		_NormalPush ("Normal Push", float) = 0.0
+		_Cutoff ("Alpha cutoff", Range(0,1.5)) = 0.5
 	}
 	SubShader
 	{
-		Tags{ "RenderType" = "Opaque"}
+		Tags {"Queue"="AlphaTest" "IgnoreProjector"="True" "RenderType"="TransparentCutout"}
 		Cull Off
 
 		CGINCLUDE
@@ -29,6 +31,10 @@
 		float _MixSub;
 		float _DistortScale;
 		float _DistortAmount;
+		float _NormalPush;
+		fixed _Cutoff;
+		float _MapScale;
+		float _ChamferScale;
 		
 		// TRIPLANAR MAPPING
 		void GetTriplanarTextures(float3 worldPos, float3 worldNormal, float4 blend, out fixed4 albedo, out half3 normal)
@@ -74,6 +80,31 @@
 			// blend albedos together
 			albedo = (xAlbedo * blend.x + zAlbedo * blend.z + BottomAlbedo * blend.w) * topshadow + TopAlbedo * topmask;
 		}
+		
+		// TRIPLANAR MAPPING FOR ALPHA
+		void GetTriplanarAlpha(float3 worldPos, float3 worldNormal, float4 blend, out fixed alpha)
+		{
+			float3 nsign = sign(worldNormal);
+		
+			// TOP
+			fixed4 TopAlbedo = tex2D(_TopAlbedo, worldPos.zx).a;
+
+			// BOTTOM
+			fixed4 BottomAlbedo = tex2D(_BottomAlbedo, worldPos.zx).a;
+
+			// SIDE X
+			worldPos.z *= nsign.x;
+			fixed4 xAlbedo = tex2D(_SideAlbedo, worldPos.zy).a;
+
+			// SIDE Z
+			worldPos.x *= -nsign.z;
+			fixed4 zAlbedo = tex2D(_SideAlbedo, worldPos.xy).a;
+
+			float topmask = saturate(TopAlbedo * blend.y * _MixMult - _MixSub);
+
+			// blend albedos together
+			alpha = xAlbedo * blend.x + zAlbedo * blend.z + BottomAlbedo * blend.w + TopAlbedo * topmask;
+		}
 
 		// VERTEX DISPLACEMENT
 		float4 getNewVertPosition(float4 p)
@@ -104,9 +135,6 @@
 			#include "Lighting.cginc"
 			#include "AutoLight.cginc"
 
-			float _MapScale;
-			float _ChamferScale;
-
 			struct appdata
 			{
 				float4 vertex : POSITION;
@@ -128,6 +156,8 @@
 			{
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID(v);
+				
+				v.vertex.xyz += v.normal * _NormalPush;
 				
 				// CONVERT VERTEX TO WORLD SPACE
 				float4 worldvertex = mul(unity_ObjectToWorld, v.vertex);
@@ -184,9 +214,10 @@
 				lighting += ShadeSH9(half4(normal,1));
 				
 				half3 col = albedo.rgb * lighting;
-
+				clip(albedo.a - _Cutoff);
+				
 				UNITY_APPLY_FOG(i.fogCoord, col);
-				return half4(col, 1);
+				return half4(col,albedo.a);
 			}
 			ENDCG
 		}
@@ -270,22 +301,55 @@
 			struct v2f
 			{
 				V2F_SHADOW_CASTER;
+				float3 worldNormal : NORMAL;
+				float3 worldPos : TEXCOORD0;
+				float4 blend : TEXCOORD1;
 			};
 
 			v2f vert(appdata_base v)
 			{
+				
 				v2f o;
 
+				v.vertex.xyz += v.normal * _NormalPush;
+				
+				// CONVERT VERTEX TO WORLD SPACE
 				float4 worldvertex = mul(unity_ObjectToWorld, v.vertex);
+
+				// DISTORT VERTEX IN WORLD SPACE
 				float4 vertPosition = getNewVertPosition(worldvertex);
+				
+				// CONVERT VERTEX BACK TO OBJECT SPACE
 				v.vertex = mul(unity_WorldToObject, vertPosition);
+
+				// CREATE TRIPLANAR BLEND MASKS
+				o.worldNormal = UnityObjectToWorldNormal(v.normal);
+
+				float3 blend = normalize(abs(o.worldNormal));
+				blend /= dot(blend, (float3)1);
+
+				float3 nsign = sign(o.worldNormal);
+
+				o.blend.x = blend.x;
+				o.blend.y = saturate(blend.y * nsign.y);
+				o.blend.w = saturate(blend.y * (1 - nsign.y));
+				o.blend.z = blend.z;
+
+				/////////////////
+				
 				o.pos = UnityObjectToClipPos(v.vertex);
+
+				o.worldPos = worldvertex.xyz * _MapScale;
+
 				TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
 				return o;
 			}
-
+			
 			float4 frag(v2f i) : SV_Target
 			{
+				fixed alpha;
+				GetTriplanarAlpha(i.worldPos, i.worldNormal, i.blend, alpha);
+				clip(alpha - _Cutoff);
 				SHADOW_CASTER_FRAGMENT(i)
 			}
 			ENDCG

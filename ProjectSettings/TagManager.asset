@@ -4,7 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - grass_block
+  - grass_block_in
+  - grass_block_out
   layers:
   - Default
   - TransparentFX

@@ -1,4 +1,4 @@
-﻿Shader "BumpedTriplanar"
+﻿Shader "TriplanarBlocks"
 {
 	Properties
 	{
@@ -8,27 +8,28 @@
 		[NoScaleOffset]	_SideNormal("Side Normal", 2D) = "white" {}
 		[NoScaleOffset]	_BottomAlbedo("Bottom Albedo", 2D) = "white" {}
 		[NoScaleOffset]	_BottomNormal("Bottom Normal", 2D) = "white" {}
+		[KeywordEnum(Opaque, Cutout)] _Blend("Blend Mode", Float) = 0
 		_MapScale ("Map Scale", float) = 1.0
 		_MixMult ("Mix Mult", float) = 1.0
 		_MixSub ("Mix Sub", float) = 1.0
-		_DistortScale ("Distort Scale", float) = 1.0
-		_DistortAmount ("Distort Amount", float) = 1.0
+		_Cutoff ("Alpha cutoff", Range(0,1)) = 1.0
 	}
 	SubShader
 	{
-		Tags{ "RenderType" = "Opaque"}
+		Tags {"RenderType"="Opaque"}
 		Cull Off
 
 		CGINCLUDE
 		#include "HLSLSupport.cginc"
 		#include "UnityShaderVariables.cginc"
 		#include "UnityCG.cginc"
+		#include "WorldDisplacement.cginc"
 
 		sampler2D _TopAlbedo, _TopNormal, _SideAlbedo, _SideNormal, _BottomAlbedo, _BottomNormal;
 		float _MixMult;
 		float _MixSub;
-		float _DistortScale;
-		float _DistortAmount;
+		float _MapScale;
+		fixed _Cutoff;
 		
 		// TRIPLANAR MAPPING
 		void GetTriplanarTextures(float3 worldPos, float3 worldNormal, float4 blend, out fixed4 albedo, out half3 normal)
@@ -74,19 +75,30 @@
 			// blend albedos together
 			albedo = (xAlbedo * blend.x + zAlbedo * blend.z + BottomAlbedo * blend.w) * topshadow + TopAlbedo * topmask;
 		}
-
-		// VERTEX DISPLACEMENT
-		float4 getNewVertPosition(float4 p)
+		
+		// TRIPLANAR MAPPING FOR ALPHA
+		void GetTriplanarAlpha(float3 worldPos, float3 worldNormal, float4 blend, out fixed alpha)
 		{
-			float3 sin1 = sin(p.xyz * _DistortScale) * _DistortAmount * 0.02;
-			float3 sin2 = sin(p.xyz * _DistortScale * 0.45) * _DistortAmount * 0.04;
-			float3 sin3 = sin(p.xyz * _DistortScale * 0.33) * _DistortAmount * 0.01;
+			float3 nsign = sign(worldNormal);
+		
+			// TOP
+			fixed4 TopAlbedo = tex2D(_TopAlbedo, worldPos.zx).a;
 
-			p.xyz += sin1.x + sin1.y + sin1.z;
-			p.xyz += sin2.x + sin2.y + sin2.z;
-			p.xyz += sin3.x + sin3.y + sin3.z;
+			// BOTTOM
+			fixed4 BottomAlbedo = tex2D(_BottomAlbedo, worldPos.zx).a;
 
-			return p;
+			// SIDE X
+			worldPos.z *= nsign.x;
+			fixed4 xAlbedo = tex2D(_SideAlbedo, worldPos.zy).a;
+
+			// SIDE Z
+			worldPos.x *= -nsign.z;
+			fixed4 zAlbedo = tex2D(_SideAlbedo, worldPos.xy).a;
+
+			float topmask = saturate(TopAlbedo * blend.y * _MixMult - _MixSub);
+
+			// blend albedos together
+			alpha = xAlbedo * blend.x + zAlbedo * blend.z + BottomAlbedo * blend.w + TopAlbedo * topmask;
 		}
 
 		ENDCG
@@ -101,11 +113,9 @@
 			#pragma target 3.0
 			#pragma multi_compile_fog
 			#pragma multi_compile_fwdbase
+			#pragma shader_feature _BLEND_OPAQUE _BLEND_CUTOUT
 			#include "Lighting.cginc"
 			#include "AutoLight.cginc"
-
-			float _MapScale;
-			float _ChamferScale;
 
 			struct appdata
 			{
@@ -137,6 +147,8 @@
 				
 				// CONVERT VERTEX BACK TO OBJECT SPACE
 				v.vertex = mul(unity_WorldToObject, vertPosition);
+
+				//v.vertex.xyz += v.normal * _NormalPush * vertmask;
 
 				// CREATE TRIPLANAR BLEND MASKS
 				float3 blendnormal = UnityObjectToWorldNormal(v.normal);
@@ -185,8 +197,12 @@
 				
 				half3 col = albedo.rgb * lighting;
 
+				#ifdef _BLEND_CUTOUT 
+				clip(albedo.a - _Cutoff);
+				#endif
+				
 				UNITY_APPLY_FOG(i.fogCoord, col);
-				return half4(col, 1);
+				return half4(col,albedo.a);
 			}
 			ENDCG
 		}
@@ -265,27 +281,66 @@
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile_shadowcaster
+			#pragma shader_feature _BLEND_OPAQUE _BLEND_CUTOUT
 			#include "UnityCG.cginc"
 
 			struct v2f
 			{
 				V2F_SHADOW_CASTER;
+				#ifdef _BLEND_CUTOUT
+				float3 worldNormal : NORMAL;
+				float3 worldPos : TEXCOORD0;
+				float4 blend : TEXCOORD1;
+				#endif
 			};
 
 			v2f vert(appdata_base v)
 			{
+				
 				v2f o;
-
+				
+				// CONVERT VERTEX TO WORLD SPACE
 				float4 worldvertex = mul(unity_ObjectToWorld, v.vertex);
+
+				// DISTORT VERTEX IN WORLD SPACE
 				float4 vertPosition = getNewVertPosition(worldvertex);
+				
+				// CONVERT VERTEX BACK TO OBJECT SPACE
 				v.vertex = mul(unity_WorldToObject, vertPosition);
+
+				// CREATE TRIPLANAR BLEND MASKS
+				#ifdef _BLEND_CUTOUT
+
+				o.worldNormal = UnityObjectToWorldNormal(v.normal);
+
+				float3 blend = normalize(abs(o.worldNormal));
+				blend /= dot(blend, (float3)1);
+
+				float3 nsign = sign(o.worldNormal);
+
+				o.blend.x = blend.x;
+				o.blend.y = saturate(blend.y * nsign.y);
+				o.blend.w = saturate(blend.y * (1 - nsign.y));
+				o.blend.z = blend.z;
+
+				o.worldPos = worldvertex.xyz * _MapScale;
+
+				#endif
+				/////////////////
+				
 				o.pos = UnityObjectToClipPos(v.vertex);
+
 				TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
 				return o;
 			}
-
+			
 			float4 frag(v2f i) : SV_Target
 			{
+				#ifdef _BLEND_CUTOUT
+				fixed alpha;
+				GetTriplanarAlpha(i.worldPos, i.worldNormal, i.blend, alpha);
+				clip(alpha - _Cutoff);
+				#endif
 				SHADOW_CASTER_FRAGMENT(i)
 			}
 			ENDCG

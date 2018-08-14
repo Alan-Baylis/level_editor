@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 46bbe480d78710743899e27924690ef7
+guid: 0283e8252f0531c4f939dbfe59b8721a
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -517,6 +517,12 @@ ModelImporter:
     101022: vertex674
     101024: vertex675
     101026: vertex676
+    101028: down_left
+    101030: down_right
+    101032: middle_left
+    101034: middle_right
+    101036: up_left
+    101038: up_right
     400000: 00000000
     400002: 00000001
     400004: 00000010
@@ -1031,6 +1037,12 @@ ModelImporter:
     401022: vertex674
     401024: vertex675
     401026: vertex676
+    401028: down_left
+    401030: down_right
+    401032: middle_left
+    401034: middle_right
+    401036: up_left
+    401038: up_right
     2100000: No Name
     2300000: 00000001
     2300002: 00000010
@@ -1287,6 +1299,12 @@ ModelImporter:
     2300504: 11111101
     2300506: 11111110
     2300508: 10011000
+    2300510: down_left
+    2300512: down_right
+    2300514: middle_left
+    2300516: middle_right
+    2300518: up_left
+    2300520: up_right
     3300000: 00000001
     3300002: 00000010
     3300004: 00000011
@@ -1542,6 +1560,12 @@ ModelImporter:
     3300504: 11111101
     3300506: 11111110
     3300508: 10011000
+    3300510: down_left
+    3300512: down_right
+    3300514: middle_left
+    3300516: middle_right
+    3300518: up_left
+    3300520: up_right
     4300000: 10000000
     4300002: 01100000
     4300004: 11000000
@@ -1797,6 +1821,12 @@ ModelImporter:
     4300504: 01001111
     4300506: 10001111
     4300508: 10011000
+    4300510: middle_left
+    4300512: middle_right
+    4300514: down_right
+    4300516: down_left
+    4300518: up_right
+    4300520: up_left
   externalObjects: {}
   materials:
     importMaterials: 0
@@ -1851,7 +1881,7 @@ ModelImporter:
     previousCalculatedGlobalScale: 1
     hasPreviousCalculatedGlobalScale: 0
   tangentSpace:
-    normalSmoothAngle: 60
+    normalSmoothAngle: 180
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4

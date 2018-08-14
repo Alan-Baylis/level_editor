@@ -121,6 +121,7 @@
 			{
 				float4 vertex : POSITION;
 				float3 normal : NORMAL;
+				float3 tangent : TANGENT;
 			};
 
 			struct v2f
@@ -148,8 +149,6 @@
 				// CONVERT VERTEX BACK TO OBJECT SPACE
 				v.vertex = mul(unity_WorldToObject, vertPosition);
 
-				//v.vertex.xyz += v.normal * _NormalPush * vertmask;
-
 				// CREATE TRIPLANAR BLEND MASKS
 				float3 blendnormal = UnityObjectToWorldNormal(v.normal);
 
@@ -164,12 +163,12 @@
 				o.blend.z = blend.z;
 
 				// DISTORT NORMALS BASED ON THE NEW VERTEX POSITION
-				float4 bitangent = float4(cross(v.normal, v.tangent), 0);
+				//float4 bitangent = float4(cross(v.normal, v.tangent), 0);
 
-				float4 v1 = getNewVertPosition(worldvertex + v.tangent * 0.01) - vertPosition;
-				float4 v2 = getNewVertPosition(worldvertex + bitangent * 0.01) - vertPosition;
+				//float4 v1 = getNewVertPosition(worldvertex + v.tangent * 0.01) - vertPosition;
+				//float4 v2 = getNewVertPosition(worldvertex + bitangent * 0.01) - vertPosition;
 
-				v.normal = cross(v1, v2);
+				//v.normal = cross(v1, v2);
 
 				/////////////////
 				

@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: cg_bumped_lighting
-  m_Shader: {fileID: 4800000, guid: c391cb63167c5c44f9194699b86ef2d3, type: 3}
+  m_Name: lambert
+  m_Shader: {fileID: 2, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: _BLEND_OPAQUE _NORMALMAP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0

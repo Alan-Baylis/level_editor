@@ -14,30 +14,26 @@
 		Pass
 		{
 			Tags{ "LightMode" = "ForwardBase" }
-
-
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma target 3.0
 			#pragma multi_compile_fog
-			#pragma multi_compile_fwdbase
+			#pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 			#include "AutoLight.cginc"
-			#include "UnityLightingCommon.cginc"
 
 			sampler2D _Albedo, _Normal;
 
 			struct v2f
 			{
 				float4 pos : SV_POSITION;
-				float3 normal : NORMAL;
-				float3 lightDir : TEXCOORD1;
 				float2 texcoord : TEXCOORD0;
-				float3x3 rotationInv : TEXCOORD4;
-				SHADOW_COORDS(2)
-				UNITY_FOG_COORDS(3)
+				float3 lightDir : LIGHTDIR;
+				float3x3 rotationInv : ROTATIONINV;
+				SHADOW_COORDS(1)
+				UNITY_FOG_COORDS(2)
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
@@ -46,20 +42,20 @@
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID(v);
 
-				o.pos = UnityObjectToClipPos(v.vertex);
-
 				o.texcoord = v.texcoord;
 
-				o.normal = UnityObjectToWorldNormal(v.normal);
+				float3 worldNormal = UnityObjectToWorldNormal(v.normal);
 
-				float3 binormal = cross(v.tangent.xyz, o.normal);
+				float3 binormal = cross(v.tangent.xyz, worldNormal);
 
-				float3x3 rotation = float3x3(v.tangent.xyz, binormal, o.normal);
+				float3x3 rotation = float3x3(v.tangent.xyz, binormal, worldNormal);
 				o.rotationInv = transpose(rotation);
 
 				o.lightDir = normalize(mul(rotation, _WorldSpaceLightPos0.xyz));
 
-				TRANSFER_SHADOW(o);
+				o.pos = UnityObjectToClipPos(v.vertex);
+
+				TRANSFER_SHADOW(o)
 				UNITY_TRANSFER_FOG(o,o.pos);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 				return o;
@@ -70,7 +66,8 @@
 				fixed4 albedo = tex2D(_Albedo, i.texcoord);
 				half3 bumpmap = UnpackNormal(tex2D(_Normal, i.texcoord));
 
-				half cn = saturate(dot(i.lightDir, bumpmap));
+				fixed shadow = SHADOW_ATTENUATION(i);
+				half cn = saturate(dot(i.lightDir, bumpmap)) * shadow;
 				half3 lighting = cn * _LightColor0.rgb;
 
 				half3 worldNormal = mul(i.rotationInv, bumpmap);
@@ -221,5 +218,6 @@
 			}
 			ENDCG
 		}*/
+		UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
 	}
 }

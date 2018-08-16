@@ -20,8 +20,6 @@
 		Cull Off
 
 		CGINCLUDE
-		#include "HLSLSupport.cginc"
-		#include "UnityShaderVariables.cginc"
 		#include "UnityCG.cginc"
 		#include "WorldDisplacement.cginc"
 
@@ -121,7 +119,6 @@
 			{
 				float4 vertex : POSITION;
 				float3 normal : NORMAL;
-				float3 tangent : TANGENT;
 			};
 
 			struct v2f
@@ -135,7 +132,7 @@
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
-			v2f vert(appdata_tan v)
+			v2f vert(appdata v)
 			{
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID(v);
